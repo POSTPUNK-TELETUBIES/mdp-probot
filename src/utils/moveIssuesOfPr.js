@@ -9,7 +9,6 @@ module.exports.moveIssuesOfPr = async (context, numberPr, new_column_id) => {
   /* obtener los issue asociados */
   const DATA = await context.octokit.graphql(GET_ISSUES_OF_PR, {
     login: process.env.ORG_NAME,
-    // name: process.env.REPO_NAME,
     name: REPO_NAME,
     number: numberPr,
   })

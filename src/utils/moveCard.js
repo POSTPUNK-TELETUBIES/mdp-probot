@@ -8,7 +8,6 @@ module.exports.moveCard = async (context, item_number, new_column_id) => {
 
   const DATA = await octokit.graphql(GET_DATA_PROJECT, {
     login: process.env.ORG_NAME,
-    // repoName: process.env.REPO_NAME,
     repoName: REPO_NAME,
     projectNumber: Number(process.env.REPO_PROJECT_NUMBER),
   })
