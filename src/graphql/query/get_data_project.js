@@ -1,6 +1,7 @@
 module.exports.GET_DATA_PROJECT = `
-query GetProjectInfo($owner: String!, $repoName: String!, $projectNumber: Int!) {
-  repository(owner: $owner, name: $repoName) {
+query GetProjectInfo($login: String!, $repoName: String!, $projectNumber: Int!) {
+  organization(login: $login){
+    repository( name: $repoName) {
     projectV2(number: $projectNumber) {
       title
       id
@@ -14,7 +15,7 @@ query GetProjectInfo($owner: String!, $repoName: String!, $projectNumber: Int!) 
               name
             }
           }
-          ... on ProjectV2Field{
+          ... on ProjectV2Field {
             name
           }
         }
@@ -36,7 +37,6 @@ query GetProjectInfo($owner: String!, $repoName: String!, $projectNumber: Int!) 
       }
     }
   }
+  }
 }
-
-
 `

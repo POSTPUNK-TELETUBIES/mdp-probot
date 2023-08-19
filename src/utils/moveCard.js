@@ -1,29 +1,37 @@
+require('dotenv').config()
 const { MOVE_CARD } = require('../graphql/mutation/move_card')
 const { octokit } = require('../config/octokit')
-const { options } = require('../data/columns')
 const { GET_DATA_PROJECT } = require('../graphql/query/get_data_project')
 
-module.exports.moveCard = async (item_number, column_name) => {
+module.exports.moveCard = async (context, item_number, new_column_id) => {
+  const REPO_NAME = context.payload.repository.name
+
   const DATA = await octokit.graphql(GET_DATA_PROJECT, {
-    owner: 'jaenfigueroa',
-    repoName: 'foxed',
-    projectNumber: 7,
+    login: process.env.ORG_NAME,
+    repoName: REPO_NAME,
+    projectNumber: Number(process.env.REPO_PROJECT_NUMBER),
   })
 
-  const ITEMS = DATA.repository.projectV2.items.nodes
+  const ITEMS = DATA.organization.repository.projectV2.items.nodes
 
   /* filtra el que tiene un number en especifico */
   const ITEM = ITEMS.filter((item) => item.content.number === item_number)
   const ITEM_ID = ITEM[0].id
 
+  /* filtrar el field llamado status de los demas */
+  const FIELD_STATUS =
+    DATA.organization.repository.projectV2.fields.nodes.filter(
+      (field) => field.name === 'Status',
+    )
+
   /* MOVER */
   octokit.graphql(MOVE_CARD, {
-    projectId: 'PVT_kwHOBB4Q_M4AT3Tg' /* fijo */,
-    fieldId: 'PVTSSF_lAHOBB4Q_M4AT3TgzgMsHcE' /* fijo */,
+    projectId: DATA.organization.repository.projectV2.id,
+    fieldId: FIELD_STATUS[0].id,
 
     itemId: ITEM_ID,
     value: {
-      singleSelectOptionId: options[column_name],
+      singleSelectOptionId: new_column_id,
     },
   })
 }
