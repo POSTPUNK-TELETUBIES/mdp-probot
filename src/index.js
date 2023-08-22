@@ -49,6 +49,11 @@ module.exports = (app) => {
       })
       return context.octokit.issues.createComment(issueComment)
     }
+
+    //cuando se crea un pr, los issues asosciados automaticamente se mueven a "in pr"
+    //siempre en cuando, antes a ese issue se le haya asignado la rama que se va a usar para el pr
+    const NUMBER_PR = context.payload.pull_request.number
+    await moveIssuesOfPr(context, NUMBER_PR, STATUS_OPTIONS['IN_PR'].id)
   })
 
   /* AL ASIGNAR UN REVISADOR A UN PR */ /* check */
@@ -62,11 +67,6 @@ module.exports = (app) => {
     })
 
     context.octokit.issues.createComment(issueComment)
-
-    //cuando se asigna un revisador a un pr, el issue asociado se mueve a "in review"
-    // mover el pr a "in review"
-    const NUMBER_PR = context.payload.pull_request.number
-    await moveIssuesOfPr(context, NUMBER_PR, STATUS_OPTIONS['IN_PR'].id)
   })
 
   /* CUANDO SE CIERRA UN PR SIN MERGEAR */
@@ -100,7 +100,7 @@ module.exports = (app) => {
     // si el pr fue mergeado a la rama "dev"
     if (RAMA === 'dev') {
       const issueComment = context.issue({
-        body: `@${USER} tu pull request fue aceptado 🎉 Gracias por tu contribución constante.`,
+        body: `@${USER} tu pull request fue aceptado, gracias por tu contribución constante 🎉`,
       })
 
       // agregar un comentario al pr
