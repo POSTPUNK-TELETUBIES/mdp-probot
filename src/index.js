@@ -45,15 +45,10 @@ module.exports = (app) => {
 
     if (RAMA === 'main') {
       const issueComment = context.issue({
-        body: `@${USER} no olvides **vincular** todos los issues de "In dev" que se estan pasando a la rama "main" en **Development** antes de hacer el **merge pull request**.`,
+        body: `@${USER} no olvides:\n - **Vincular** todos los issues de "In dev" (que se van a pasar a "main") en **Development** antes de hacer el **merge pull request**.`,
       })
       return context.octokit.issues.createComment(issueComment)
     }
-
-    //cuando se crea un pr, los issues asosciados automaticamente se mueven a "in pr"
-    //siempre en cuando, antes a ese issue se le haya asignado la rama que se va a usar para el pr
-    const NUMBER_PR = context.payload.pull_request.number
-    await moveIssuesOfPr(context, NUMBER_PR, STATUS_OPTIONS['IN_PR'].id)
   })
 
   /* AL ASIGNAR UN REVISADOR A UN PR */ /* check */
@@ -67,6 +62,10 @@ module.exports = (app) => {
     })
 
     context.octokit.issues.createComment(issueComment)
+
+    // despues de vincular los issues y asignar un revisador, se mueven los issues a "in pr"
+    const NUMBER_PR = context.payload.pull_request.number
+    await moveIssuesOfPr(context, NUMBER_PR, STATUS_OPTIONS['IN_PR'].id)
   })
 
   /* CUANDO SE CIERRA UN PR SIN MERGEAR */
