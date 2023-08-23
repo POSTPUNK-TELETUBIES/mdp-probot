@@ -20,9 +20,7 @@ module.exports = (app) => {
 
   /* AL CERRAR UNA ISSUE */ /* check */
   app.on('issues.closed', async (context) => {
-    const ASSIGNEES = context.payload.issue.assignees.map(
-      (assignee) => assignee.login,
-    )
+    const ASSIGNEES = context.payload.issue.assignees.map((assignee) => assignee.login)
     const USERS = getNormalizedNames(ASSIGNEES)
 
     const issueComment = context.issue({
@@ -45,7 +43,7 @@ module.exports = (app) => {
 
     if (RAMA === 'main') {
       const issueComment = context.issue({
-        body: `@${USER} no olvides:\n - **Vincular** todos los issues de "In dev" (que se van a pasar a "main") en **Development** antes de hacer el **merge pull request**.`,
+        body: `@${USER} no olvides:\n - **Vincular** todos los issues de "In dev" (que se van a pasar a "main") en **Development**, antes de hacer el **merge pull request**.`,
       })
       return context.octokit.issues.createComment(issueComment)
     }

@@ -20,16 +20,5 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
   },
-  rules: {
-    /* usar comillas simples */
-    quotes: ['warn', 'single'],
-    /* no punto y coma */
-    semi: ['warn', 'never'],
-    /* no usar var */
-    'no-var': 'warn',
-    /* usar preferiblemente const */
-    'prefer-const': 'warn',
-    /* añadir coma a final de las listas */
-    'comma-dangle': ['warn', 'always-multiline'],
-  },
+  rules: {},
 }
